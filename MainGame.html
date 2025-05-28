@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900 min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-2xl">
+        <!-- Welcome Area -->
+        <div id="welcome-area" class="text-center p-10 rounded-3xl shadow-2xl bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900 border-4 border-indigo-400">
+            <h1 class="text-5xl text-white font-extrabold mb-8 drop-shadow-lg">Welcome to Rock Paper Scissors!</h1>
+            <div class="mb-8">
+                <label for="rounds-input" class="text-indigo-200 text-xl font-semibold">
+                    How many wins are needed to win the game?
+                </label>
+                <input id="rounds-input" type="number" min="1" max="20" value="5"
+                    class="rounded-lg px-4 py-2 ml-4 text-indigo-900 font-bold bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 w-24 shadow">
+            </div>
+            <button id="start-btn" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xl px-8 py-3 rounded-full shadow-lg hover:from-pink-600 hover:to-purple-700 transition-all duration-200 font-bold">Start Game</button>
+        </div>
+        <!-- Game Area -->
+        <div id="game-area" class="text-center mt-10 p-10 rounded-3xl shadow-2xl bg-gradient-to-br from-blue-800 via-indigo-900 to-purple-800 border-4 border-purple-400" style="display:none;">
+            <h1 class="text-4xl text-white font-extrabold mb-6 drop-shadow-lg">Rock Paper Scissors</h1>
+            <div class="text-2xl text-indigo-200 mb-8 font-semibold">Choose your weapon!</div>
+            <div class="flex justify-center gap-6 mb-10">
+                <button id="rock" class="bg-gradient-to-r from-red-500 to-pink-500 text-white text-2xl px-6 py-3 rounded-full shadow-lg hover:scale-110 hover:from-red-600 hover:to-pink-600 transition-all duration-200 font-bold">✊ Rock</button>
+                <button id="paper" class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-2xl px-6 py-3 rounded-full shadow-lg hover:scale-110 hover:from-yellow-500 hover:to-yellow-700 transition-all duration-200 font-bold">✋ Paper</button>
+                <button id="scissors" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl px-6 py-3 rounded-full shadow-lg hover:scale-110 hover:from-blue-600 hover:to-purple-600 transition-all duration-200 font-bold">✌️ Scissors</button>
+            </div>
+            <div class="space-y-4 text-indigo-100">
+                <div class="p-4 bg-gradient-to-r from-indigo-700 to-indigo-900 rounded-xl shadow">
+                    <p class="text-lg">Your choice: <span id="human-choise" class="font-bold text-yellow-300"></span></p>
+                </div>
+                <div class="p-4 bg-gradient-to-r from-indigo-700 to-indigo-900 rounded-xl shadow">
+                    <p class="text-lg">Computer's choice: <span id="computer-choice" class="font-bold text-pink-300"></span></p>
+                </div>
+                <div class="p-4 bg-gradient-to-r from-indigo-900 to-purple-900 rounded-xl shadow min-h-[50px] flex items-center justify-center">
+                    <p id="round-result" class="text-2xl font-extrabold text-white drop-shadow-lg">~</p>
+                </div>
+                <div class="mt-8 text-white text-2xl rounded-xl font-extrabold bg-gradient-to-r from-indigo-900 to-purple-900 py-4 shadow">
+                    <p>Score: <span class="text-yellow-300">You <span id="human-score">0</span></span> - <span class="text-pink-300"><span id="computer-score">0</span> Computer</span></p>
+                </div>
+                <div class="mt-6">
+                    <button id="refresh" class="bg-gradient-to-r from-green-500 to-teal-500 text-white text-xl px-6 py-2 rounded-full shadow-lg hover:from-green-600 hover:to-teal-600 transition-all duration-200 font-bold">Refresh Game</button>
+                </div>
+            </div>
+        </div>
+    </div><script>
+// ...existing code...
+
+let hs = 0, cs = 0, winTarget = 5;
+const r = document.getElementById('rock');
+const p = document.getElementById('paper');
+const s = document.getElementById('scissors');
+const humanChoiceDisplay = document.getElementById('human-choise');
+const computerChoiceDisplay = document.getElementById('computer-choice');
+const roundResultDisplay = document.getElementById('round-result');
+const humanScoreDisplay = document.getElementById('human-score');
+const computerScoreDisplay = document.getElementById('computer-score');
+const roundsInput = document.getElementById('rounds-input');
+const startBtn = document.getElementById('start-btn');
+const welcomeArea = document.getElementById('welcome-area');
+const gameArea = document.getElementById('game-area');
+
+// Hide game area initially
+gameArea.style.display = "none";
+
+// Disable buttons until game starts
+r.disabled = true;
+p.disabled = true;
+s.disabled = true;
+
+startBtn.onclick = function() {
+    hs = 0; cs = 0;
+    winTarget = parseInt(roundsInput.value) || 5;
+    humanScoreDisplay.textContent = hs;
+    computerScoreDisplay.textContent = cs;
+    roundResultDisplay.textContent = "~";
+    humanChoiceDisplay.textContent = "";
+    computerChoiceDisplay.textContent = "";
+    r.disabled = false;
+    p.disabled = false;
+    s.disabled = false;
+    // Hide welcome, show game
+    welcomeArea.style.display = "none";
+    gameArea.style.display = "block";
+};
+
+function getComputerChoice() {
+    return ['rock', 'paper', 'scissors'][Math.floor(Math.random() * 3)];
+}
+
+function playRound(humanChoice) {
+    if (hs >= winTarget || cs >= winTarget) {
+        alert("Game over! Please refresh or start a new game.");
+        return;
+    }
+    const computerChoice = getComputerChoice();
+    humanChoiceDisplay.textContent = humanChoice;
+    computerChoiceDisplay.textContent = computerChoice;
+
+    if (humanChoice === computerChoice) {
+        roundResultDisplay.textContent = "It's a tie!";
+    } else if (
+        (humanChoice === 'rock' && computerChoice === 'scissors') ||
+        (humanChoice === 'paper' && computerChoice === 'rock') ||
+        (humanChoice === 'scissors' && computerChoice === 'paper')
+    ) {
+        hs++;
+        humanScoreDisplay.textContent = hs;
+        roundResultDisplay.textContent = "You win!";
+    } else {
+        cs++;
+        computerScoreDisplay.textContent = cs;
+        roundResultDisplay.textContent = "Computer wins!";
+    }
+    if (hs >= winTarget || cs >= winTarget) {
+        r.disabled = true;
+        p.disabled = true;
+        s.disabled = true;
+        if (hs > cs) {
+            roundResultDisplay.textContent = "Game Over! You win the game!";
+        } else if (cs > hs) {
+            roundResultDisplay.textContent = "Game Over! Computer wins the game!";
+        } else {
+            roundResultDisplay.textContent = "Game Over! It's a tie!";
+        }
+    }
+}
+
+r.onclick = () => playRound('rock');
+p.onclick = () => playRound('paper');
+s.onclick = () => playRound('scissors');
+
+document.getElementById('refresh').onclick = function() {
+    location.reload();
+};
+</script>
+</body>
+</html>
